@@ -19,7 +19,24 @@ text(sv_boundS[rowz,1:2], labels=row.names(sv_boundS)[rowz],col="red3",cex=0.75)
 
 sl_bound <- read.csv("SmithsLk.boundary.csv")
 str(sl_bound)
+
 tempUTM <- SpatialPoints(sl_bound,proj4string = UTM50)
 tempLL <- spTransform(tempUTM, CRSobj = LongLat)
 sl_bound$Longitude <- tempLL@coords[,1]
 sl_bound$Latitude <- tempLL@coords[,2]
+
+tempUTM <- SpatialPoints(sv_boundN,proj4string = UTM50)
+tempLL <- spTransform(tempUTM, CRSobj = LongLat)
+sv_boundN$Longitude <- tempLL@coords[,1]
+sv_boundN$Latitude <- tempLL@coords[,2]
+
+tempUTM <- SpatialPoints(sv_boundS,proj4string = UTM50)
+tempLL <- spTransform(tempUTM, CRSobj = LongLat)
+sv_boundS$Longitude <- tempLL@coords[,1]
+sv_boundS$Latitude <- tempLL@coords[,2]
+
+rm(list=c(ls(pattern = "temp"),"rowz"))
+
+write.csv(sv_boundN, file="sv_boundN.csv", row.names = FALSE)
+write.csv(sv_boundS, file="sv_boundS.csv", row.names = FALSE)
+write.csv(sl_bound, file="sl_bound.csv", row.names = FALSE)

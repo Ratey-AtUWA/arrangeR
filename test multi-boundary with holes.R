@@ -4,14 +4,13 @@ LongLat <- CRS("+proj=longlat +ellps=WGS84
            +datum=WGS84 +no_defs") # uses Earth ellipsis ex WGS84 datum
 UTM50 <- CRS("+proj=utm +zone=50 +south") # just for Zone 50 S
 
-p4 <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-
-
 # make boundary coordinates into SpatialPolygons object
-irregpoly <- Polygon(sv_boundary[, c(1,2)], hole = F)
-irregPolys = Polygons(list(irregpoly),1)
-irregSpatialPolys = SpatialPolygons(list(irregPolys),
-                                    proj4string = p4)
+poly1 <- Polygon(sv_boundN[, c(1,2)], hole = FALSE)
+poly2 <- Polygon(sv_boundS[, c(1,2)], hole = FALSE)
+poly3 <- Polygon(sl_bound[, c(1,2)], hole = TRUE)
+irregPolys <-  Polygons(list(poly1,poly2,poly3),3)
+irregSpatialPolys <- SpatialPolygons(list(irregPolys),
+                                    proj4string = UTM50)
 
 # define limits of initial (maximal) grid
 extremes <- c(min(floor(boundary[, 1])),
