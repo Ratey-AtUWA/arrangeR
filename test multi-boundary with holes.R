@@ -1,4 +1,5 @@
 require(sp)
+setwd("C:/Users/00028958/LocalData/R Projects/arrangeR")
 
 LongLat <- CRS("+proj=longlat +ellps=WGS84
            +datum=WGS84 +no_defs") # uses Earth ellipsis ex WGS84 datum
