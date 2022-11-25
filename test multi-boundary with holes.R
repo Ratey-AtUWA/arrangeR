@@ -3,9 +3,9 @@ setwd("C:/Users/00028958/LocalData/R Projects/arrangeR")
 
 LongLat <- CRS("+proj=longlat +ellps=WGS84
            +datum=WGS84 +no_defs") # uses Earth ellipsis ex WGS84 datum
-UTM50 <- CRS("+proj=utm +zone=50 +south") # just for Zone 50 S
+UTM50S <- CRS("+proj=utm +zone=50 +south") # just for Zone 50 S
 
-p4 <- UTM50
+p4 <- UTM50S
 
 # make boundary coordinates into SpatialPolygons object
 poly1 <- Polygon(sv_boundN[, c(1,2)], hole = FALSE)
@@ -43,10 +43,14 @@ gridSP <- SpatialPoints(grid_big, proj4string = p4)
 inOrOut <- as.vector(over(gridSP, irregSpatialPolys))
 insideSP <- gridSP[which(inOrOut>0)]
 
-par(mar = c(3,3,1,1))
-plot(irregSpatialPolys)
-points(gridSP@coords, pch=3, cex = 0.8, col="pink")
+par(mar = c(3,3,1,1), mgp = c(1.7,0.3,0), tcl = 0.25)
+plot(irregSpatialPolys); axis(1); axis(2)
+mtext("Easting (m)",1,1.7,font=2); mtext("Northing (m)", 2, 1.7,font=2)
+mtext("Projection: EPSG 32750, UTM Zone 50",1,-1.2,cex=0.8,adj=0.05,col=8)
+points(gridSP@coords, pch=3, cex = 0.8, col="orchid")
 points(insideSP@coords, pch=19, cex = 1, col="blue3")
+legend("left", inset = 0.025, legend = c("Sample here","Not here"),
+       pch = c(19,3), col = c("blue3","orchid"), cex = 1.4)
 
 # convert masked coordinates back into data frame
 inside <- as.data.frame(insideSP@coords)
@@ -64,9 +68,6 @@ output <-
     max_points = NROW(grid_big),
     shape_area = area,
     max_area = maxarea,
-    extremes = c(min(floor(boundary[, 1])),
-                 min(floor(boundary[, 2])),
-                 max(ceiling(boundary[, 1])),
-                 max(ceiling(boundary[, 2]))),
+    extremes = irregSpatialPolys@bbox,
     proj_4_str = p4
   )
