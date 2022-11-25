@@ -70,7 +70,6 @@ rectBySpacing <-
     return(output)
   }
 ```
-    
 
 # Testing the rectBySpacing function
 
