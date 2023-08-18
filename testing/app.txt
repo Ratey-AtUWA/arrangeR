@@ -1,0 +1,44 @@
+library(shiny)
+
+# Define UI for application that draws a plot
+ui <- fluidPage(
+
+    # Application title
+    titlePanel("Lake Claremont sampling map"),
+
+    # Sidebar with a slider input for number of bins
+    sidebarLayout(
+      sidebarPanel(
+        sliderInput("xspacing",
+                    "West-East spacing:",
+                    min = 20,
+                    max = 200,
+                    value = 100),
+        sliderInput("yspacing",
+                    "South-North spacing:",
+                    min = 20,
+                    max = 200,
+                    value = 100),
+          fileInput("file1",
+                    label = "Boundary file:",
+                    accept = ".csv"),
+        # set table output type
+        numericInput("n", "Rows", value = 5, min = 1, step = 1)
+        ),
+        # Show a plot of the generated distribution
+        mainPanel(
+           textOutput("fname"),
+           tableOutput("head")
+        )
+    ),
+)
+
+server <- function(input, output) {
+  data <- reactive({req(input$upload)
+    read.csv(input$upload$datapath)
+  })
+  output$head <- renderTable(head(data(), input$n))
+  output$fname <- renderText(cat("File was:",input$upload,"\n"))
+}
+# Run the application
+shinyApp(ui = ui, server = server)

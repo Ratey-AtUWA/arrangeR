@@ -1,0 +1,45 @@
+library(shiny)
+library(sf)
+
+# lkc0 <- read.csv("LakeClaremont.csv")
+# lkc <- st_as_sf(lkc0, coords=c("E","N"),crs=st_crs(32750) )
+# lcbl <- st_polygon(list(as.matrix(lcr0),as.matrix(lkc0))) |>
+#   st_sfc(crs=st_crs(32750))
+
+# Define UI for application that draws a plot
+ui <- fluidPage(
+
+  # Application title
+  titlePanel("Lake Claremont sampling map"),
+
+  # Sidebar with a slider input for number of bins
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("xspacing",
+                  "West-East spacing:",
+                  min = 20,
+                  max = 200,
+                  value = 100),
+      sliderInput("yspacing",
+                  "South-North spacing:",
+                  min = 20,
+                  max = 200,
+                  value = 100),
+      fileInput("lcmap", "Boundary file:", accept = ".csv")
+    ),
+    # Show a plot of the generated distribution
+    mainPanel(
+      plotOutput("lcmap")
+    )
+  )
+)
+
+server <- function(input, output) {
+  data <- reactive({req(input$upload)
+    output$lcr0 <- read.csv(input$upload$datapath)
+  })
+    output$lcr <- st_as_sf(output$lcr0, coords=c("E","N"),crs=st_crs(32750) )
+  output$lcmap <- renderPlot(plot(output$lcr, col="#a0ff8040"))
+}
+# Run the application
+shinyApp(ui = ui, server = server)
