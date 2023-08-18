@@ -1,6 +1,18 @@
-# function rectBySpacing to populate irregular polygon with 
-# rectangular grid points at defined x (and optionally y) spacings
-# at present this only works for a simple boundary - one area, no holes!
+#' function rectBySpacing to populate irregular polygon with
+#' rectangular grid points at defined x (and optionally y) spacings
+#' at present this only works for a simple boundary - one area, no holes!
+#'
+#' @param boundary A 2-column data frame containing the boundary coordinates
+#' @param xspacing (numeric) horizontal spacing between points
+#' @param yspacing (numeric) vertical spacing between points
+#' @param xoffset (numeric) offset from origin defined by minimum of x-coordinates in boundary
+#' @param yoffset (numeric) offset from origin defined by minimum of y-coordinates in boundary
+#' @param proj4 (character) string defining projection in 'proj4' format (e.g. see https://epsg.io/)
+#' @return A list containing points_in = 2 column matrix of points inside the boundary, numeric values of xspacing, yspacing, xoffset, yoffset, npoints = number of sample points inside boundary, max_points = number of sample points in rectangle defined by boundary extremes, shape_area = area of sampling polygon, max_area = area of bounding rectangle, extremes = vector of coordinates defining bounding rectangle, proj_4_str = proj4 sring defining the CRS
+#' @examples
+#' rectBySpacing(data.frame(x = (399000, 400000), y = c(6467900, 6468000)),
+#'               xspacing = 100, proj4 = "+proj=utm +zone=50 +south")
+#'
 rectBySpacing <-
   function(boundary,
            xspacing,
@@ -10,7 +22,7 @@ rectBySpacing <-
            proj4 = NULL
   ) {
     require(sp)
-    
+
     # if projection not defined, set to EPSG:4326 (LongLat)
     if (is.null(proj4)) {
       p4 <-
@@ -18,13 +30,13 @@ rectBySpacing <-
     } else {
       p4 <- CRS(proj4)
     }
-    
+
     # make boundary coordinates into SpatialPolygons object
     irregpoly <- Polygon(boundary[, c(1,2)], hole = F)
     irregPolys = Polygons(list(irregpoly),1)
-    irregSpatialPolys = SpatialPolygons(list(irregPolys), 
+    irregSpatialPolys = SpatialPolygons(list(irregPolys),
                           proj4string = p4)
-    
+
     # define limits of initial (maximal) grid
     extremes <- c(min(floor(boundary[, 1])),
                   min(floor(boundary[, 2])),
@@ -34,7 +46,7 @@ rectBySpacing <-
     area <- irregpoly@area
     maxarea <-
       (extremes[3] - extremes[1]) * (extremes[4] - extremes[2])
-    
+
     # make initial (maximal) grid
     grid_big <- expand.grid(
       seq(extremes[1],
@@ -51,7 +63,7 @@ rectBySpacing <-
     # convert masked coordinates back into data frame
     inside <- as.data.frame(insideSP@coords)
     colnames(inside) <- c("x", "y")
-    
+
     # make output object
   output <-
     list(
@@ -114,7 +126,7 @@ legend(
   box.col = 8,
   title = expression(bold("Rectangular Grid Sampling Design")),
   legend = c(
-    paste0("Spacing = ", RFdesign$x_spacing,"\u00D7",RFdesign$y_spacing), 
+    paste0("Spacing = ", RFdesign$x_spacing,"\u00D7",RFdesign$y_spacing),
     paste0("  offset = ", RFdesign$x_offset,"\u00D7",RFdesign$y_offset),
     paste("Irregular polygon", signif(RFdesign$shape_area, 5), "m\u00B2"),
     paste("Max. extent", signif(RFdesign$max_area, 6), "m\u00B2")
@@ -127,9 +139,9 @@ mtext(paste(
   "Polygon contains",
   RFdesign$npoints,
   "points from maximal grid of",
-  RFdesign$max_points, "points"), 
+  RFdesign$max_points, "points"),
   3, -1, col = "grey50", font = 3)
-mtext("UWA Ridgefield Farm, Pingelly", 
-  side = 3, line = 0.1, 
-  col = "#27348B", font = 2, 
+mtext("UWA Ridgefield Farm, Pingelly",
+  side = 3, line = 0.1,
+  col = "#27348B", font = 2,
   cex = 0.9, family = "serif")

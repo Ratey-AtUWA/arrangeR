@@ -1,13 +1,10 @@
 ---
 title: "rectangular grid into irregular spatial polygon"
 ---
-Code to make an **R** function `rectBySpacing()` to populate an irregular
-polygon with rectangular grid points at defined x (and optionally y) spacings.
-At present this is only written for a simple boundary - one area, with no holes!
 
-Ideally users could input as many polygons/holes as necessary to define their
-sampling area. This means that the input object may have to be a `list`, for
-which the number of objects can be counted using `length(input_list)`.
+Code to make an **R** function `rectBySpacing()` to populate an irregular polygon with rectangular grid points at defined x (and optionally y) spacings. At present this is only written for a simple boundary - one area, with no holes!
+
+Ideally users could input as many polygons/holes as necessary to define their sampling area. This means that the input object may have to be a `list`, for which the number of objects can be counted using `length(input_list)`.
 
 ```{r rectByspacing function, results='hold'}
 rectBySpacing <-
@@ -135,4 +132,3 @@ mtext("UWA Ridgefield Farm, Pingelly",
   col = "#27348B", font = 2, 
   cex = 0.9, family = "serif")
 ```
-

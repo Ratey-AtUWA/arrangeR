@@ -1,11 +1,10 @@
-library(sp)
 library(sf)
 
-setwd("C:/Users/00028958/LocalData/R Projects/arrangeR")
+setwd("C:/Users/00028958/OneDrive - The University of Western Australia/R Projects/arrangeR")
 
-LongLat <- CRS("+proj=longlat +ellps=WGS84
-           +datum=WGS84 +no_defs") # uses Earth ellipsis ex WGS84 datum
-UTM50S <- CRS("+proj=utm +zone=50 +south") # just for Zone 50 S
+LongLat <- st_crs(4326) # long-lat using Earth ellipsis ex WGS84 datum
+UTM50S <- st_crs(32750)
+# just for Zone 50 S
 
 p4 <- UTM50S
 
@@ -17,9 +16,9 @@ poly2 <- st_polygon(list(as.matrix(sv_boundS[, c(1,2)]),
 #                                     proj4string = p4)
 irregSFpolys <- st_multipolygon(list(poly1, poly2)) |> st_sfc()
 st_crs(irregSFpolys) <- UTM50S
+
 # define limits of initial (maximal) grid
-extremes <- c(floor(bbox(irregSFpolys)[1,]),
-              ceiling(bbox(irregSFpolys)[2,]))
+extremes <- st_bbox(irregSFpolys)
 # calculate areas
 area <- st_area(irregSFpolys)
 maxarea <- diff(st_bbox(irregSFpolys)[c(1,3)]) *
