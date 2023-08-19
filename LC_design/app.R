@@ -10,9 +10,9 @@ ui <- fluidPage(
       # inputs
       fileInput("reserve", "Reserve boundary file", accept = ".csv"),
       fileInput("lake", "Lake boundary file", accept = ".csv"),
-      numericInput("xsp", "X (W-E) coordinate spacing:",
+      numericInput("xsp", "X (W-E) grid coordinate spacing:",
                    value = 50, min = 20, step = 5),
-      numericInput("ysp", "Y (S-N) coordinate spacing:",
+      numericInput("ysp", "Y (S-N) grid coordinate spacing:",
                    value = 50, min = 20, step = 5),
     ),
     mainPanel(
@@ -37,7 +37,7 @@ server <- function(input, output, session) {
     })
   output$lcmap <- renderPlot({
     par(mar=c(3,3,.5,.5), mgp=c(1.7,0.3,0),tcl=0.2, font.lab=2)
-    plot(data0(), type="l", lwd=1, col="#e0c00040",
+    plot(data0(), type="l", lwd=1, col="#d0c00040",
          xlab = "Easting, UTM Zone 50S", ylab = "Northing, UTM Zone 50S",
          cex.lab=1.4, axes=T)
   })
