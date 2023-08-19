@@ -9,7 +9,11 @@ ui <- fluidPage(
     sidebarPanel(
       # inputs
       fileInput("reserve", "Reserve boundary file", accept = ".csv"),
-      numericInput("n", "Show this many rows of coordinates:", value = 5, min = 1, step = 1),
+      fileInput("lake", "Lake boundary file", accept = ".csv"),
+      numericInput("xsp", "X (W-E) coordinate spacing:",
+                   value = 50, min = 20, step = 5),
+      numericInput("ysp", "Y (S-N) coordinate spacing:",
+                   value = 50, min = 20, step = 5),
     ),
     mainPanel(
       plotOutput("lcmap", width="70%", height = "600px")
@@ -18,14 +22,22 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  data <- reactive({
+  data1 <- reactive({
     req(input$reserve)
-    st_read(input$reserve$datapath) |>
-      st_as_sf(coords=c("E","N"), crs=st_crs(32750))
+    read.csv(input$reserve$datapath) |>
+      as.matrix()
   })
+  data2 <- reactive({
+    req(input$lake)
+    read.csv(input$lake$datapath) |>
+      as.matrix()
+  })
+  data0 <- reactive({
+    st_polygon(list(data1(),data2())) |> st_sfc(crs=st_crs(32750))
+    })
   output$lcmap <- renderPlot({
     par(mar=c(3,3,.5,.5), mgp=c(1.7,0.3,0),tcl=0.2, font.lab=2)
-    plot(data(), type="l", lwd=2, col="#ffa08080",
+    plot(data0(), type="l", lwd=1, col="#e0c00040",
          xlab = "Easting, UTM Zone 50S", ylab = "Northing, UTM Zone 50S",
          cex.lab=1.4, axes=T)
   })
