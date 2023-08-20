@@ -36,8 +36,8 @@ server <- function(input, output, session) {
     st_polygon(list(data1(),data2())) |> st_sfc(crs=st_crs(32750))
     })
   output$lcmap <- renderPlot({
-    par(mar=c(3,3,.5,.5), mgp=c(1.7,0.3,0),tcl=0.2, font.lab=2)
-    plot(data0(), type="l", lwd=1, col="#d0c00040",
+    par(mar=c(3,3,.5,.5), mgp=c(1.7,0.3,0),tcl=0.3, font.lab=2)
+    plot(data0(), lwd=1, col="#d0c00040",
          xlab = "Easting, UTM Zone 50S", ylab = "Northing, UTM Zone 50S",
          cex.lab=1.4, axes=T)
   })
