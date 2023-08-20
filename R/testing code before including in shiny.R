@@ -4,18 +4,18 @@ lcpoly <- st_polygon(list(as.matrix(lcb),as.matrix(lcw))) |>
   st_sfc(crs=st_crs(32750))
 
 gap <- 80
-off0 <- 10
-issq <- FALSE
+off0 <- 28
+ifsq <- T
 input <- data.frame(xsp=gap, ysp=gap)
 sampgrid <-st_make_grid(lcpoly,
                cellsize=c(input$xsp,input$ysp),
-               offset = c(off0,off0),
-               what="centers", square=issq)
+               offset = st_bbox(lcpoly)[c("xmin", "ymin")]+off0,
+               what="centers", square=ifsq)
 
 ggplot(lcpoly) +
     geom_sf(data=lcpoly, bg="#e0c08040", col="#806020") +
     geom_sf(data=st_intersection(sampgrid, lcpoly),
-            shape=3, col="darkgoldenrod", size=3, stroke=2) +
+            shape=10, col="tan4", size=3, stroke=0.5) +
     xlab(label = "Longitude") +
     ylab(label = "Latitude") +
     geom_text(aes(x=384400, y=6461800, label="Lake\nClaremont",
