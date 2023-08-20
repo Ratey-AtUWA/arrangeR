@@ -13,12 +13,15 @@ ui <- fluidPage(
   titlePanel("Sample planning map: Lake Claremont"),
   sidebarLayout(
     sidebarPanel(
-      sliderInput(inputId = "xsp",
-                  label = "x spacing (west-east), metres",
-                  min=20, max=200, value= 80),
-      sliderInput(inputId = "ysp",
-                  label = "y spacing (south-north), metres",
-                  min=20, max=200, value= 80)
+      sliderInput(inputId = "xysp",
+                  label = "Grid spacing (metres)",
+                  min=30, max=200, value= 80),
+      sliderInput(inputId = "off0",
+                  label = "Offset from origin (metres)",
+                  min=0, max=50, value= 0.001),
+      selectInput(inputId="ifsq",
+                  label="Do you want a rectangular grid?\n(triangular otherwise)",
+                  choices=c("Yes"="TRUE", "No"="FALSE"), selected="TRUE")
     ),
     mainPanel(
       plotOutput("lcmap", height = "640px")
@@ -31,14 +34,15 @@ ui <- fluidPage(
 server <- function(input, output) {
   sampgrid <- reactive({
     st_make_grid(lcpoly,
-                 cellsize=c(input$xsp,input$ysp),
-                 what="centers")
+                 cellsize=c(input$xysp, input$xysp),
+                 offset = st_bbox(lcpoly)[c("xmin", "ymin")]+input$off0,
+                 what="centers", square=as.logical(input$ifsq))
     })
   output$lcmap <- renderPlot(
     ggplot(lcpoly) +
-      geom_sf(data=lcpoly, bg="#e0c08040", col="#806020") +
+      geom_sf(data=lcpoly, bg="#e0e08040", col="#808020") +
       geom_sf(data=st_intersection(sampgrid(), lcpoly),
-              shape=3, col="darkgoldenrod", size=3, stroke=2) +
+              shape=10, col="tan4", size=3, stroke=1) +
       xlab(label = "Longitude") +
       ylab(label = "Latitude") +
       geom_text(aes(x=384400, y=6461800, label="Lake\nClaremont",
