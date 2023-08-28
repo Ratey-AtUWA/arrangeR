@@ -24,7 +24,7 @@ ui <- fluidPage(
       textOutput("spacer1"),
       sliderInput(inputId = "xysp",
                   label = "Grid spacing (metres)",
-                  min=30, max=200, value= 80),
+                  min=30, max=130, value= 80),
       sliderInput(inputId = "off0",
                   label = "Offset from origin (metres)",
                   min=0, max=50, value= 0.001),
