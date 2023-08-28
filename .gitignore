@@ -10,4 +10,5 @@
 *.docx
 *.pdf
 *.txt
+deploy.R
 unused/*
