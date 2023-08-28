@@ -1,7 +1,11 @@
+# check packages
+packages <- c('shiny', 'sf', 'ggplot2')
+install.packages(setdiff(packages, rownames(installed.packages())))
+
 # load packages
 library(shiny)
-library(ggplot2)
 library(sf)
+library(ggplot2)
 
 lcb <- read.csv("LC_SampledArea.csv", stringsAsFactors = TRUE)
 lcw <- read.csv("LC_WaterEdge.csv", stringsAsFactors = TRUE)
@@ -22,7 +26,7 @@ ui <- fluidPage(
                   label = "Offset from origin (metres)",
                   min=0, max=50, value= 0.001),
       selectInput(inputId="ifsq",
-                  label="Do you want a rectangular grid?\n(triangular otherwise)",
+                  label="Do you want a rectangular grid? (Select 'No' for triangular)",
                   choices=c("Yes"="TRUE", "No"="FALSE"), selected="TRUE"),
       sliderInput(inputId = "rand0",
                   label = "Amount of randomness (metres)",
@@ -30,10 +34,10 @@ ui <- fluidPage(
       textOutput(outputId = "GridInfo")
     ),
     mainPanel(
-      tabsetPanel(
        plotOutput("lcmap", height = "640px"),
+       textOutput("spacer"),
+       textOutput("tcaption"),
        dataTableOutput("samples")
-       )
       )
     )
   )
@@ -65,10 +69,17 @@ server <- function(input, output) {
       coord_sf(datum = st_crs(32750))
   )
   output$GridInfo <- renderText({
-    paste("Showing",NROW(st_intersection(sampgrid(), lcpoly)),"points")
+    paste("Map shows",NROW(st_intersection(sampgrid(), lcpoly)),"sampling points.")
+  })
+  output$spacer <- renderText({
+    paste("\u00A0","\u00A0","\u00A0")
+  })
+  output$tcaption <- renderText({
+    paste("⊞ Data Table with",NROW(st_intersection(sampgrid(),lcpoly)),"
+          points; use the box below to choose how many rows are displayed.")
   })
   output$samples <- renderDataTable(
-    st_coordinates(st_intersection(sampgrid(), lcpoly)),
+    round(st_coordinates(st_intersection(sampgrid(), lcpoly)),1),
     options = list(pageLength = 10)
   )
 }
