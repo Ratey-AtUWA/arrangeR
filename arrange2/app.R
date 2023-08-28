@@ -20,6 +20,8 @@ ui <- fluidPage(
   h3("Lake Claremont"),
   sidebarLayout(
     sidebarPanel(
+      textOutput("howto"),
+      textOutput("spacer1"),
       sliderInput(inputId = "xysp",
                   label = "Grid spacing (metres)",
                   min=30, max=200, value= 80),
@@ -27,8 +29,8 @@ ui <- fluidPage(
                   label = "Offset from origin (metres)",
                   min=0, max=50, value= 0.001),
       selectInput(inputId="ifsq",
-                  label="Do you want a rectangular grid? (Select 'No' for triangular)",
-                  choices=c("Yes"="TRUE", "No"="FALSE"), selected="TRUE"),
+                  label="Choose your grid geometry",
+                  choices=c("Rectangular"="TRUE", "Triangular (hexagonal)"="FALSE"), selected="TRUE"),
       sliderInput(inputId = "rand0",
                   label = "Amount of randomness (metres)",
                   min=0, max=25, value= 0),
@@ -36,7 +38,7 @@ ui <- fluidPage(
     ),
     mainPanel(
        plotOutput("lcmap", height = "720px"),
-       textOutput("spacer"),
+       textOutput("spacer2"),
        textOutput("tcaption"),
        dataTableOutput("samples")
       )
@@ -69,10 +71,16 @@ server <- function(input, output) {
             axis.ticks.length = unit(-0.2, "cm")) +
       coord_sf(datum = st_crs(32750))
   )
-  output$GridInfo <- renderText({
-    paste("Map shows",NROW(st_intersection(sampgrid(), lcpoly)),"sampling points.")
+  output$howto <- renderText({
+    paste("Adjust the values of grid parameters below","and see what happens!")
   })
-  output$spacer <- renderText({
+  output$spacer1 <- renderText({
+    paste("\u00A0","\u00A0","\u00A0")
+  })
+  output$GridInfo <- renderText({
+    paste("Current map shows",NROW(st_intersection(sampgrid(), lcpoly)),"sampling points.")
+  })
+  output$spacer2 <- renderText({
     paste("\u00A0","\u00A0","\u00A0")
   })
   output$tcaption <- renderText({
