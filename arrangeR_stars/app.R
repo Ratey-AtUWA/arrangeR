@@ -9,8 +9,8 @@ library(ggplot2)
 library(stars)
 
 lcbkgd <- read_stars("LCbkgd.jpg")
-lcb <- read.csv("https://github.com/Ratey-AtUWA/arrangeR/raw/main/arrange2/LC_SampledArea.csv", stringsAsFactors = TRUE)
-lcw <- read.csv("https://github.com/Ratey-AtUWA/arrangeR/raw/main/arrange2/LC_WaterEdge.csv", stringsAsFactors = TRUE)
+lcb <- read.csv("https://github.com/Ratey-AtUWA/arrangeR/raw/main/arrangeR_stars/LC_SampledArea.csv", stringsAsFactors = TRUE)
+lcw <- read.csv("https://github.com/Ratey-AtUWA/arrangeR/raw/main/arrangeR_stars/LC_WaterEdge.csv", stringsAsFactors = TRUE)
 lake <- st_polygon(list(as.matrix(lcw))) |> st_sfc(crs=st_crs(32750))
 lcpoly <- st_polygon(list(as.matrix(lcb),as.matrix(lcw))) |>
   st_sfc(crs=st_crs(32750))
