@@ -1,0 +1,26 @@
+---
+title: "make georeferenced jpegs manually"
+output:
+  html_document: 
+    toc_depth: 2
+    fig_caption: yes
+    number_sections: yes
+    self_contained: no
+---
+
+```{r}
+library(sf)
+lcext <- st_as_sf(data.frame(x=c(383937.2,384907.0), y=c(6461225.8,6462354.4)),
+                  coords=c("x","y"),crs=st_crs(32750))
+```
+
+```{r fig.height=16.0, fig.width=14}
+library(maptiles)
+lcmap <- get_tiles(lcext, provider = "Thunderforest.Outdoors",
+                      apikey="03b0375e8e7c47d0a03018a9001de439", 
+                      crop = TRUE, zoom=16, verbose = F)
+plot_tiles(lcmap)
+# axis(1, mgp=c(-3,-2,-1));axis(2, mgp=c(-3,-2,-1))
+par("usr")
+```
+
