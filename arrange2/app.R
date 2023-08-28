@@ -34,11 +34,13 @@ ui <- fluidPage(
       sliderInput(inputId = "rand0",
                   label = "Amount of randomness (metres)",
                   min=0, max=25, value= 0),
-      textOutput(outputId = "GridInfo")
+      textOutput(outputId = "GridInfo"),
+      textOutput("spacer2"),
+      textOutput(outputId = "scroll")
     ),
     mainPanel(
        plotOutput("lcmap", height = "720px"),
-       textOutput("spacer2"),
+       textOutput("spacer3"),
        textOutput("tcaption"),
        dataTableOutput("samples")
       )
@@ -81,6 +83,12 @@ server <- function(input, output) {
     paste("Current map shows",NROW(st_intersection(sampgrid(), lcpoly)),"sampling points.")
   })
   output$spacer2 <- renderText({
+    paste("\u00A0","\u00A0","\u00A0")
+  })
+  output$scroll <- renderText({
+    paste("Scroll down to see","table of coordinates.")
+  })
+  output$spacer3 <- renderText({
     paste("\u00A0","\u00A0","\u00A0")
   })
   output$tcaption <- renderText({
