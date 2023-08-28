@@ -7,7 +7,7 @@
 .httr-oauth
 .DS_Store
 *.png
-*.jpg
 *.docx
 *.pdf
 *.txt
+unused/*
