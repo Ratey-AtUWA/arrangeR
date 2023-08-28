@@ -5,12 +5,14 @@ library(sf)
 
 lcb <- read.csv("LC_SampledArea.csv", stringsAsFactors = TRUE)
 lcw <- read.csv("LC_WaterEdge.csv", stringsAsFactors = TRUE)
+lake <- st_polygon(list(as.matrix(lcw))) |> st_sfc(crs=st_crs(32750))
 lcpoly <- st_polygon(list(as.matrix(lcb),as.matrix(lcw))) |>
   st_sfc(crs=st_crs(32750))
 
 # ui.R ----
 ui <- fluidPage(
-  titlePanel("Sample planning map: Lake Claremont"),
+  titlePanel("Sampling grid illustration map"),
+  h3("Lake Claremont"),
   sidebarLayout(
     sidebarPanel(
       sliderInput(inputId = "xysp",
@@ -21,10 +23,15 @@ ui <- fluidPage(
                   min=0, max=50, value= 0.001),
       selectInput(inputId="ifsq",
                   label="Do you want a rectangular grid?\n(triangular otherwise)",
-                  choices=c("Yes"="TRUE", "No"="FALSE"), selected="TRUE")
+                  choices=c("Yes"="TRUE", "No"="FALSE"), selected="TRUE"),
+      sliderInput(inputId = "rand0",
+             label = "Amount of randomness (metres)",
+             min=0, max=25, value= 0),
+      textOutput(outputId = "GridInfo")
     ),
     mainPanel(
-      plotOutput("lcmap", height = "640px")
+      plotOutput("lcmap", height = "640px"),
+      dataTableOutput("samples")
     )
   )
 )
@@ -40,18 +47,27 @@ server <- function(input, output) {
   })
   output$lcmap <- renderPlot(
     ggplot(lcpoly) +
+      geom_sf(data=lake, bg="#40c0ff40", col="#40c0ff40") +
       geom_sf(data=lcpoly, bg="#e0e08040", col="#808020") +
-      geom_sf(data=st_intersection(sampgrid(), lcpoly),
-              shape=10, col="tan4", size=3, stroke=1) +
-      xlab(label = "Longitude") +
-      ylab(label = "Latitude") +
+      geom_sf(data=st_as_sf(st_jitter(st_intersection(sampgrid(), lcpoly),
+                             amount=input$rand0)),
+              shape=10, col="blue3", size=3, stroke=1) +
+      xlab(label = "Easting (m, UTM Zone 50S)") +
+      ylab(label = "Northing (m, UTM Zone 50S)") +
       geom_text(aes(x=384400, y=6461800, label="Lake\nClaremont",
                     fontface = "italic"), col="royalblue", size=6) +
       theme_bw() +
-      theme(axis.title = element_text(size=14, face = "bold"),
-            axis.text = element_text(size=12),
+      theme(axis.title = element_text(size=18, face = "bold"),
+            axis.text = element_text(size=14),
             axis.ticks.length = unit(-0.2, "cm")) +
-      coord_sf(crs = st_crs(32750))
+      coord_sf(datum = st_crs(32750))
+  )
+  output$GridInfo <- renderText({
+    paste("Showing",NROW(st_intersection(sampgrid(), lcpoly)),"points")
+    })
+  output$samples <- renderDataTable(
+    st_coordinates(st_intersection(sampgrid(), lcpoly)),
+    options = list(pageLength = 10)
   )
 }
 
