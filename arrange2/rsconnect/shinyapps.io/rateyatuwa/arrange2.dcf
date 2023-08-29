@@ -5,6 +5,6 @@ account: rateyatuwa
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 9701865
-bundleId: 7618348
+bundleId: 7618432
 url: https://rateyatuwa.shinyapps.io/arrange2/
 version: 1
